@@ -14,6 +14,7 @@ interface AuthState {
     expiresIn: number
     spotifyApi: SpotifyWebApi | null
     user: User | null
+    tokenRefreshTimeout: NodeJS.Timeout | null
 }
 
 export const useAuthStore = defineStore('auth', {
@@ -23,6 +24,7 @@ export const useAuthStore = defineStore('auth', {
         expiresIn: 0,
         spotifyApi: null,
         user: null,
+        tokenRefreshTimeout: null
     }),
 
     getters: {
@@ -39,6 +41,18 @@ export const useAuthStore = defineStore('auth', {
             })
         },
 
+        async forceRefreshToken() {
+            console.log('Forcing immediate token refresh...')
+            try {
+                await this.refreshAccessToken()
+                console.log('Token refresh completed successfully')
+                return true
+            } catch (error) {
+                console.error('Failed to force refresh token:', error)
+                return false
+            }
+        },
+
         async setTokens(accessToken: string, refreshToken: string, expiresIn: number) {
             console.log('Setting tokens:', { accessToken: !!accessToken, refreshToken: !!refreshToken, expiresIn })
             this.accessToken = accessToken
@@ -53,11 +67,33 @@ export const useAuthStore = defineStore('auth', {
                 try {
                     await this.spotifyApi.getMe()
                     console.log('Token verification successful')
+                    // Schedule token refresh
+                    this.scheduleTokenRefresh()
                 } catch (error) {
                     console.error('Token verification failed:', error)
                     throw error
                 }
             }
+        },
+
+        scheduleTokenRefresh() {
+            // Clear any existing timeout
+            if (this.tokenRefreshTimeout) {
+                clearTimeout(this.tokenRefreshTimeout)
+            }
+
+            // Schedule refresh 5 minutes before expiration
+            const refreshTime = (this.expiresIn - 300) * 1000 // Convert to milliseconds
+            console.log(`Scheduling token refresh in ${refreshTime/1000} seconds`)
+            
+            this.tokenRefreshTimeout = setTimeout(async () => {
+                try {
+                    await this.refreshAccessToken()
+                } catch (error) {
+                    console.error('Failed to refresh token:', error)
+                    this.logout()
+                }
+            }, refreshTime)
         },
 
         async refreshAccessToken() {
@@ -77,6 +113,9 @@ export const useAuthStore = defineStore('auth', {
                 if (this.spotifyApi) {
                     this.spotifyApi.setAccessToken(this.accessToken)
                 }
+
+                // Schedule next refresh
+                this.scheduleTokenRefresh()
             } catch (error) {
                 console.error('Error refreshing token:', error)
                 this.logout()
@@ -110,6 +149,11 @@ export const useAuthStore = defineStore('auth', {
 
         logout() {
             console.log('Logging out...')
+            // Clear the refresh timeout
+            if (this.tokenRefreshTimeout) {
+                clearTimeout(this.tokenRefreshTimeout)
+                this.tokenRefreshTimeout = null
+            }
             this.accessToken = null
             this.refreshToken = null
             this.expiresIn = 0
