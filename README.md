@@ -3,6 +3,7 @@
 Pour des raisons de sécurité liées à l'authentification avec l'API Spotify, toute personne souhaitant tester ce projet doit choisir l'une des deux options suivantes :
 
 ✅ Option 1 (recommandée) : Me contacter
+
 Veuillez m’envoyer votre nom d’utilisateur Spotify et l’adresse e-mail associée au compte.
 Je pourrai ainsi autoriser manuellement votre accès à l’application via mon compte développeur.
 
