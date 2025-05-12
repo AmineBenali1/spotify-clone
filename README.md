@@ -30,6 +30,7 @@ SPOTIFY_CLIENT_SECRET=your_client_secret_here
 SPOTIFY_REDIRECT_URI=http://127.0.0.1:3000/callback
 
 
+
 🎧 Note importante :
 
 L'API Spotify ne permet la lecture directe de musique dans une application web que si l'utilisateur possède un compte Spotify Premium
