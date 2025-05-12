@@ -1,4 +1,5 @@
 🔐 Accès à l'application Spotify
+
 Pour des raisons de sécurité liées à l'authentification avec l'API Spotify, toute personne souhaitant tester ce projet doit d'abord me communiquer son nom d'utilisateur Spotify ainsi que l’adresse e-mail associée au compte.
 Cela me permettra d’autoriser manuellement l’accès au compte via l’application.
 
