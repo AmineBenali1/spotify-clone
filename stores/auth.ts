@@ -40,6 +40,7 @@ export const useAuthStore = defineStore('auth', {
         },
 
         async setTokens(accessToken: string, refreshToken: string, expiresIn: number) {
+            console.log('Setting tokens:', { accessToken: !!accessToken, refreshToken: !!refreshToken, expiresIn })
             this.accessToken = accessToken
             this.refreshToken = refreshToken
             this.expiresIn = expiresIn
@@ -47,14 +48,29 @@ export const useAuthStore = defineStore('auth', {
             if (this.spotifyApi) {
                 this.spotifyApi.setAccessToken(accessToken)
                 this.spotifyApi.setRefreshToken(refreshToken)
+                
+                // Verify token is working
+                try {
+                    await this.spotifyApi.getMe()
+                    console.log('Token verification successful')
+                } catch (error) {
+                    console.error('Token verification failed:', error)
+                    throw error
+                }
             }
         },
 
         async refreshAccessToken() {
-            if (!this.spotifyApi || !this.refreshToken) return
+            if (!this.spotifyApi || !this.refreshToken) {
+                console.error('Cannot refresh token: spotifyApi or refreshToken is missing')
+                return
+            }
 
             try {
+                console.log('Refreshing access token...')
                 const data = await this.spotifyApi.refreshAccessToken()
+                console.log('Token refresh successful')
+                
                 this.accessToken = data.body.access_token
                 this.expiresIn = data.body.expires_in
 
@@ -64,21 +80,36 @@ export const useAuthStore = defineStore('auth', {
             } catch (error) {
                 console.error('Error refreshing token:', error)
                 this.logout()
+                throw error
             }
         },
 
         async fetchUserProfile() {
-            if (!this.spotifyApi) return
+            if (!this.spotifyApi) {
+                console.error('Cannot fetch user profile: spotifyApi is not initialized')
+                return
+            }
 
             try {
+                console.log('Fetching user profile...')
                 const data = await this.spotifyApi.getMe()
                 this.user = data.body
+                console.log('User profile fetched successfully:', this.user)
             } catch (error) {
                 console.error('Error fetching user profile:', error)
+                // Try to refresh token if the error is due to token expiration
+                if (error.status === 401) {
+                    await this.refreshAccessToken()
+                    // Retry fetching user profile
+                    await this.fetchUserProfile()
+                } else {
+                    throw error
+                }
             }
         },
 
         logout() {
+            console.log('Logging out...')
             this.accessToken = null
             this.refreshToken = null
             this.expiresIn = 0
