@@ -1,9 +1,32 @@
 🔐 Accès à l'application Spotify
 
-Pour des raisons de sécurité liées à l'authentification avec l'API Spotify, toute personne souhaitant tester ce projet doit d'abord me communiquer son nom d'utilisateur Spotify ainsi que l’adresse e-mail associée au compte.
-Cela me permettra d’autoriser manuellement l’accès au compte via l’application.
+Pour des raisons de sécurité liées à l'authentification avec l'API Spotify, toute personne souhaitant tester ce projet doit choisir l'une des deux options suivantes :
 
-📩 Merci de me contacter à l’adresse suivante : Amine.BENALI@um6p.ma
+✅ Option 1 (recommandée) : Me contacter
+Veuillez m’envoyer votre nom d’utilisateur Spotify et l’adresse e-mail associée au compte.
+Je pourrai ainsi autoriser manuellement votre accès à l’application via mon compte développeur.
+
+📩 Contact : Amine.BENALI@um6p.ma
+
+🔧 Option 2 : Utiliser votre propre compte Spotify Developer
+
+Si vous préférez utiliser votre propre configuration :
+
+Créez un compte sur Spotify Developer Dashboard
+
+Créez une nouvelle application
+
+Récupérez votre Client ID et Client Secret
+
+Ajoutez http://127.0.0.1:3000/callback aux Redirect URIs dans les paramètres de l’application
+
+Créez un fichier .env à la racine du projet avec ce format :
+
+SPOTIFY_CLIENT_ID=your_client_id_here
+
+SPOTIFY_CLIENT_SECRET=your_client_secret_here
+
+SPOTIFY_REDIRECT_URI=http://127.0.0.1:3000/callback
 
 # Nuxt Minimal Starter
 
