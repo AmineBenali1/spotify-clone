@@ -29,6 +29,14 @@ SPOTIFY_CLIENT_SECRET=your_client_secret_here
 
 SPOTIFY_REDIRECT_URI=http://127.0.0.1:3000/callback
 
+
+🎧 Note importante :
+
+L'API Spotify ne permet la lecture directe de musique dans une application web que si l'utilisateur possède un compte Spotify Premium
+
+Vous pouvez toujours consulter les albums et les titres dans mon application, puis les écouter sur le site officiel de Spotify via un lien.
+
+
 # Nuxt Minimal Starter
 
 Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
